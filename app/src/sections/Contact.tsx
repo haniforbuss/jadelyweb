@@ -1,9 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapPin, Mail, Phone, Send } from 'lucide-react';
 import { contactConfig } from '../config';
+import { getContent, type ContactContent } from '../lib/contentStorage';
 
 const Contact = () => {
-  if (!contactConfig.heading) return null;
+  const saved = getContent<ContactContent>('contact', {
+    heading: contactConfig.heading,
+    description: contactConfig.description,
+    location: contactConfig.location,
+    email: contactConfig.email,
+    phone: contactConfig.phone,
+  });
+  const cfg = { ...contactConfig, ...saved };
+  if (!cfg.heading) return null;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -75,44 +84,44 @@ const Contact = () => {
           >
             {/* Logo */}
             <h2 className="font-serif text-5xl md:text-6xl lg:text-[80px] mb-8 leading-none">
-              {contactConfig.heading}
+              {cfg.heading}
             </h2>
 
             <p className="text-xl font-light leading-relaxed opacity-90 mb-12 max-w-md">
-              {contactConfig.description}
+              {cfg.description}
             </p>
 
             {/* Contact Info */}
             <div className="space-y-6 mb-12">
-              {contactConfig.location && (
+              {cfg.location && (
                 <div className="flex items-center gap-4">
                   <MapPin size={20} strokeWidth={1.5} className="text-[#8b6d4b]" />
                   <div>
                     <span className="block text-xs uppercase tracking-wider opacity-60 mb-1">{contactConfig.locationLabel}</span>
-                    <span className="font-light">{contactConfig.location}</span>
+                    <span className="font-light">{cfg.location}</span>
                   </div>
                 </div>
               )}
 
-              {contactConfig.email && (
+              {cfg.email && (
                 <div className="flex items-center gap-4">
                   <Mail size={20} strokeWidth={1.5} className="text-[#8b6d4b]" />
                   <div>
                     <span className="block text-xs uppercase tracking-wider opacity-60 mb-1">{contactConfig.emailLabel}</span>
-                    <a href={`mailto:${contactConfig.email}`} className="font-light hover:text-[#8b6d4b] transition-colors">
-                      {contactConfig.email}
+                    <a href={`mailto:${cfg.email}`} className="font-light hover:text-[#8b6d4b] transition-colors">
+                      {cfg.email}
                     </a>
                   </div>
                 </div>
               )}
 
-              {contactConfig.phone && (
+              {cfg.phone && (
                 <div className="flex items-center gap-4">
                   <Phone size={20} strokeWidth={1.5} className="text-[#8b6d4b]" />
                   <div>
                     <span className="block text-xs uppercase tracking-wider opacity-60 mb-1">{contactConfig.phoneLabel}</span>
-                    <a href={`tel:${contactConfig.phone}`} className="font-light hover:text-[#8b6d4b] transition-colors">
-                      {contactConfig.phone}
+                    <a href={`tel:${cfg.phone}`} className="font-light hover:text-[#8b6d4b] transition-colors">
+                      {cfg.phone}
                     </a>
                   </div>
                 </div>

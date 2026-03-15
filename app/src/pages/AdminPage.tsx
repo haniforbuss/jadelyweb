@@ -2,7 +2,7 @@ import { useState, useEffect, KeyboardEvent } from 'react';
 import {
   LayoutDashboard, Package, LogOut, Shield, Eye, Edit3, Save, X,
   XCircle, CheckCircle2, AlertTriangle, Search, Minus, Plus,
-  ShoppingBag, Layers, TrendingDown, ArrowUpRight, PlusCircle, Trash2,
+  ShoppingBag, Layers, TrendingDown, ArrowUpRight, PlusCircle, Trash2, LayoutTemplate,
 } from 'lucide-react';
 import { productsConfig } from '../config';
 import type { Product } from '../config';
@@ -11,6 +11,7 @@ import {
   getCustomProducts, saveCustomProducts, getNextCustomId,
   type StockItem, type StockStatus, type CustomProduct,
 } from '../lib/stockStorage';
+import ContentTab from './ContentTab';
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
@@ -18,7 +19,7 @@ const ADMIN_PASSWORD = 'imyourmaster';
 const BRAND = '#8b6d4b';
 const SIDEBAR_BG = '#0f172a';
 
-type Tab = 'dashboard' | 'stock';
+type Tab = 'dashboard' | 'stock' | 'content';
 type StockState = Record<number, StockItem>;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -760,6 +761,7 @@ export default function AdminPage() {
   const navItems: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'stock', label: 'Stok Produk', icon: Package },
+    { id: 'content', label: 'Konten Web', icon: LayoutTemplate },
   ];
 
   if (!isLoggedIn) return <LoginPage onLogin={handleLogin} />;
@@ -833,7 +835,9 @@ export default function AdminPage() {
         <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-100 px-8 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-slate-800 font-semibold text-base">
-              {activeTab === 'dashboard' ? '📊 Dashboard' : '📦 Manajemen Stok Produk'}
+              {activeTab === 'dashboard' ? '📊 Dashboard'
+                : activeTab === 'stock' ? '📦 Manajemen Stok Produk'
+                : '✏️ Konten Website'}
             </h1>
             <p className="text-slate-400 text-xs mt-0.5">{formatDate()}</p>
           </div>
@@ -865,6 +869,7 @@ export default function AdminPage() {
               onDelete={handleDeleteProduct}
             />
           )}
+          {activeTab === 'content' && <ContentTab />}
         </main>
       </div>
     </div>

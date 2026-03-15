@@ -1,8 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { videoSectionConfig } from '../config';
+import { getContent, type VideoContent } from '../lib/contentStorage';
 
 const VideoSection = () => {
-  if (!videoSectionConfig.heading) return null;
+  const saved = getContent<VideoContent>('video', {
+    tag: videoSectionConfig.tag,
+    heading: videoSectionConfig.heading,
+    body1: videoSectionConfig.bodyParagraphs[0] ?? '',
+    body2: videoSectionConfig.bodyParagraphs[1] ?? '',
+    ctaText: videoSectionConfig.ctaText,
+  });
+  const cfg = { ...videoSectionConfig, tag: saved.tag, heading: saved.heading, ctaText: saved.ctaText };
+  const bodyParagraphs = [saved.body1, saved.body2].filter(Boolean);
+  if (!cfg.heading) return null;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -51,7 +61,7 @@ const VideoSection = () => {
             }`}
             style={{ transitionDelay: '200ms' }}
           >
-            {videoSectionConfig.tag}
+            {cfg.tag}
           </span>
 
           <h2
@@ -60,10 +70,10 @@ const VideoSection = () => {
             }`}
             style={{ transitionDelay: '400ms', lineHeight: '1.2' }}
           >
-            {videoSectionConfig.heading}
+            {cfg.heading}
           </h2>
 
-          {videoSectionConfig.bodyParagraphs.map((paragraph, index) => (
+          {bodyParagraphs.map((paragraph, index) => (
             <p
               key={index}
               className={`text-[#696969] text-lg leading-relaxed mb-6 transition-all duration-700 ${
@@ -75,12 +85,12 @@ const VideoSection = () => {
             </p>
           ))}
 
-          {videoSectionConfig.ctaText && (
+          {cfg.ctaText && (
             <div
               className={`flex flex-col sm:flex-row gap-4 transition-all duration-700 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
-              style={{ transitionDelay: `${600 + videoSectionConfig.bodyParagraphs.length * 200 + 200}ms` }}
+              style={{ transitionDelay: `${600 + bodyParagraphs.length * 200 + 200}ms` }}
             >
               <a
                 href={videoSectionConfig.ctaTarget}
@@ -90,7 +100,7 @@ const VideoSection = () => {
                 }}
                 className="inline-flex items-center justify-center px-8 py-4 bg-[#8b6d4b] text-white font-light tracking-widest text-sm btn-hover"
               >
-                {videoSectionConfig.ctaText}
+                {cfg.ctaText}
               </a>
             </div>
           )}

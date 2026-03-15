@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { faqConfig } from '../config';
+import { getContent, type FaqItemContent } from '../lib/contentStorage';
 
 const FAQ = () => {
-  if (!faqConfig.heading && faqConfig.faqs.length === 0) return null;
+  const faqs = getContent<FaqItemContent[]>('faqs', faqConfig.faqs.map(f => ({
+    id: f.id, question: f.question, answer: f.answer,
+  })));
+  if (!faqConfig.heading && faqs.length === 0) return null;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -58,7 +62,7 @@ const FAQ = () => {
 
         {/* FAQ Items */}
         <div className="space-y-3">
-          {faqConfig.faqs.map((faq, index) => (
+          {faqs.map((faq, index) => (
             <div
               key={faq.id}
               className={`transition-all duration-700 ${

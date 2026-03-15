@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { heroConfig } from '../config';
+import { getContent, type HeroContent } from '../lib/contentStorage';
 
 const Hero = () => {
-  if (!heroConfig.title) return null;
+  const saved = getContent<HeroContent>('hero', {
+    tagline: heroConfig.tagline,
+    title: heroConfig.title,
+    ctaPrimaryText: heroConfig.ctaPrimaryText,
+    ctaSecondaryText: heroConfig.ctaSecondaryText,
+  });
+  const cfg = { ...heroConfig, ...saved };
 
   const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -19,7 +26,8 @@ const Hero = () => {
     }
   };
 
-  const titleLines = heroConfig.title.split('\n');
+  if (!cfg.title) return null;
+  const titleLines = cfg.title.split('\n');
 
   return (
     <section
@@ -47,7 +55,7 @@ const Hero = () => {
           style={{ transitionDelay: '300ms' }}
         >
           <span className="inline-block mb-4 text-sm tracking-[0.3em] font-light uppercase">
-            {heroConfig.tagline}
+            {cfg.tagline}
           </span>
         </div>
 
@@ -71,7 +79,7 @@ const Hero = () => {
           }`}
           style={{ transitionDelay: '900ms' }}
         >
-          {heroConfig.ctaPrimaryText && (
+          {cfg.ctaPrimaryText && (
             <a
               href={heroConfig.ctaPrimaryTarget}
               onClick={(e) => {
@@ -80,10 +88,10 @@ const Hero = () => {
               }}
               className="px-12 py-4 bg-[#8b6d4b] text-white font-light tracking-widest text-sm btn-hover"
             >
-              {heroConfig.ctaPrimaryText}
+              {cfg.ctaPrimaryText}
             </a>
           )}
-          {heroConfig.ctaSecondaryText && (
+          {cfg.ctaSecondaryText && (
             <a
               href={heroConfig.ctaSecondaryTarget}
               onClick={(e) => {
@@ -92,7 +100,7 @@ const Hero = () => {
               }}
               className="px-12 py-4 border border-white text-white font-light tracking-widest text-sm hover:bg-white hover:text-black transition-all duration-300"
             >
-              {heroConfig.ctaSecondaryText}
+              {cfg.ctaSecondaryText}
             </a>
           )}
         </div>

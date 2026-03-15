@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { blogConfig } from '../config';
+import { getContent, type BlogPostContent } from '../lib/contentStorage';
 
 const Blog = () => {
-  if (!blogConfig.heading && blogConfig.posts.length === 0) return null;
+  const posts = getContent<BlogPostContent[]>('blog_posts', blogConfig.posts.map(p => ({
+    id: p.id, title: p.title, date: p.date, image: p.image, excerpt: p.excerpt,
+  })));
+  if (!blogConfig.heading && posts.length === 0) return null;
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -54,7 +58,7 @@ const Blog = () => {
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {blogConfig.posts.map((post, index) => (
+          {posts.map((post, index) => (
             <article
               key={post.id}
               className={`group relative h-[500px] overflow-hidden cursor-pointer transition-all duration-700 ${
